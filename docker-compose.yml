@@ -1,0 +1,34 @@
+services:
+
+  postgres-main:
+    image: postgres:16
+    container_name: postgres-main
+    restart: always
+    environment:
+      POSTGRES_USER: mainuser
+      POSTGRES_PASSWORD: mainpassword
+      POSTGRES_DB: maindb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_main_data:/var/lib/postgresql/data
+      - ./sql/openopus.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  postgres-vector:
+    image: ankane/pgvector:latest
+    container_name: postgres-vector
+    restart: always
+    environment:
+      POSTGRES_USER: vectoruser
+      POSTGRES_PASSWORD: vectorpassword
+      POSTGRES_DB: vectordb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_vector_data:/var/lib/postgresql/data
+      - ./sql/openopus_vector.sql:/docker-entrypoint-initdb.d/schema.sql
+
+
+volumes:
+  postgres_main_data:
+  postgres_vector_data:

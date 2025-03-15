@@ -1,0 +1,8 @@
+# PostgreSQL Connection Parameters
+DB_PARAMS = {
+    "dbname": "vectordb",
+    "user": "vectoruser",
+    "password": "vectorpassword",
+    "host": "localhost",  # Change to your pgvector container's hostname
+    "port": "5433",
+}

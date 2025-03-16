@@ -1,4 +1,4 @@
-# Open Classic
+# Deep Classic
 ## Arijit Mitra and Luke Neal 
 
 ### Matching software for classical works and repertoire

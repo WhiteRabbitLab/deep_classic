@@ -12,7 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_main_data:/var/lib/postgresql/data
-      - ./sql/openopus.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./.sql/openopus.sql:/docker-entrypoint-initdb.d/schema.sql
 
   postgres-vector:
     image: ankane/pgvector:latest
@@ -26,7 +26,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres_vector_data:/var/lib/postgresql/data
-      - ./sql/openopus_vector.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./.sql/openopus_vector.sql:/docker-entrypoint-initdb.d/schema.sql
 
 
 volumes:

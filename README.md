@@ -39,7 +39,7 @@ brew install docker
 Install Python
 
 ```
- brew install python
+brew install python
 ```
 
 ### How to run
@@ -59,7 +59,7 @@ docker-compose up -d
 - Populate the local OpenOpus database
 
 ```
-python fecth_data.py
+python fetch_data.py
 ```
 
 - Manual ETL for vectorising the data and populating the vector database
@@ -68,3 +68,10 @@ python fecth_data.py
 python vectorise_data.py
 ```
 
+### Useful commands
+
+- Clean down the vector database volume
+
+```
+docker volume rm deep_classic_postgres_vector_data
+```

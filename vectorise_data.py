@@ -36,13 +36,10 @@ def fetch_missing_composers(flat_conn, vector_conn):
         flat_cur.execute("SELECT id, name, complete_name, epoch, country FROM composer")
         all_composers = flat_cur.fetchall()
 
-        # print(vector_cur.fetchall())  # Should include 'composer_embeddings'
-        # vector_cur.execute("SELECT composer_id FROM composer_embeddings")
-        # existing_composers = {row[0] for row in vector_cur.fetchall()}  # Set of existing composer IDs
-        # return [c for c in all_composers if c[0] not in existing_composers]
+        vector_cur.execute("SELECT composer_id FROM composer_embeddings")
+        existing_composers = {row[0] for row in vector_cur.fetchall()}  # Set of existing composer IDs
 
-        return all_composers
-
+        return [c for c in all_composers if c[0] not in existing_composers]
 
 # Fetch works that do not have embeddings yet
 def fetch_missing_works(flat_conn, vector_conn):
@@ -67,6 +64,21 @@ def insert_embeddings(table, column, data, vector_conn):
             embedding = get_embedding(text)
             cur.execute(sql, (entity_id, np.array(embedding).tolist()))
         vector_conn.commit()
+
+
+
+# Insert composer embeddings into the vector database
+def insert_composer_embeddings(table, column, data, vector_conn):
+    with vector_conn.cursor() as cur:
+        sql = f"INSERT INTO composer_embeddings, ({column}, embedding) VALUES (%s, %s)"
+        for row in data:
+            print(f"Inserted {row} into embeddings.")
+            entity_id, *text_fields = row
+            text = " ".join(filter(None, text_fields))  # Join non-null text fields
+            embedding = get_embedding(text)
+            cur.execute(sql, (entity_id, np.array(embedding).tolist()))
+        vector_conn.commit()
+
 
 def main():
     main_conn = psycopg2.connect(**MAIN_DB_PARAMS)

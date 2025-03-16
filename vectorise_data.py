@@ -23,11 +23,12 @@ VECTOR_DB_PARAMS = {
 
 # Generate embeddings using OpenAI
 def get_embedding(text):
-    response = openai.Embedding.create(
+    response = openai.embeddings.create(
         input=text,
         model="text-embedding-ada-002"
     )
-    return response["data"][0]["embedding"]
+
+    return response.data[0].embedding
 
 # Fetch composers that do not have embeddings yet
 def fetch_missing_composers(flat_conn, vector_conn):
@@ -35,11 +36,13 @@ def fetch_missing_composers(flat_conn, vector_conn):
         flat_cur.execute("SELECT id, name, complete_name, epoch, country FROM composer")
         all_composers = flat_cur.fetchall()
 
-        print(vector_cur.fetchall())  # Should include 'composer_embeddings'
-        vector_cur.execute("SELECT composer_id FROM composer_embeddings")
-        existing_composers = {row[0] for row in vector_cur.fetchall()}  # Set of existing composer IDs
+        # print(vector_cur.fetchall())  # Should include 'composer_embeddings'
+        # vector_cur.execute("SELECT composer_id FROM composer_embeddings")
+        # existing_composers = {row[0] for row in vector_cur.fetchall()}  # Set of existing composer IDs
+        # return [c for c in all_composers if c[0] not in existing_composers]
 
-        return [c for c in all_composers if c[0] not in existing_composers]
+        return all_composers
+
 
 # Fetch works that do not have embeddings yet
 def fetch_missing_works(flat_conn, vector_conn):
@@ -53,10 +56,12 @@ def fetch_missing_works(flat_conn, vector_conn):
         return [w for w in all_works if w[0] not in existing_works]
 
 # Insert embeddings into the vector database
+# TODO insert openopus id instead of entity id
 def insert_embeddings(table, column, data, vector_conn):
     with vector_conn.cursor() as cur:
         sql = f"INSERT INTO {table} ({column}, embedding) VALUES (%s, %s)"
         for row in data:
+            print(f"Inserted {row} into embeddings.")
             entity_id, *text_fields = row
             text = " ".join(filter(None, text_fields))  # Join non-null text fields
             embedding = get_embedding(text)

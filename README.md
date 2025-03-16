@@ -10,8 +10,6 @@ This repository uses two local PostgreSQL databases;
 one to store works in a relational database,
 the other to vectorise the data for use in large-langauge models.
 
-## Matching software for classical works and repertoire
-
 ## Prerequisites
 
 A UNIX-based system, with Docker and Python installed.

@@ -5,7 +5,7 @@ import numpy as np
 # OpenAI API Key
 openai.api_key = "xxx"
 
-FLAT_DB_PARAMS = {
+MAIN_DB_PARAMS = {
     "dbname": "maindb",
     "user": "mainuser",
     "password": "mainpassword",
@@ -64,12 +64,12 @@ def insert_embeddings(table, column, data, vector_conn):
         vector_conn.commit()
 
 def main():
-    flat_conn = psycopg2.connect(**FLAT_DB_PARAMS)
+    main_conn = psycopg2.connect(**MAIN_DB_PARAMS)
     vector_conn = psycopg2.connect(**VECTOR_DB_PARAMS)
 
     try:
         # Process Composer Data
-        missing_composers = fetch_missing_composers(flat_conn, vector_conn)
+        missing_composers = fetch_missing_composers(main_conn, vector_conn)
         if missing_composers:
             insert_embeddings("composer_embeddings", "composer_id", missing_composers, vector_conn)
             print(f"Inserted {len(missing_composers)} new composer embeddings.")
@@ -77,7 +77,7 @@ def main():
             print("No new composers to process.")
 
         # Process Work Data
-        missing_works = fetch_missing_works(flat_conn, vector_conn)
+        missing_works = fetch_missing_works(main_conn, vector_conn)
         if missing_works:
             insert_embeddings("work_embeddings", "work_id", missing_works, vector_conn)
             print(f"Inserted {len(missing_works)} new work embeddings.")
@@ -85,7 +85,7 @@ def main():
             print("No new works to process.")
 
     finally:
-        flat_conn.close()
+        main_conn.close()
         vector_conn.close()
 
 if __name__ == "__main__":

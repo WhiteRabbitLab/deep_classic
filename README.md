@@ -47,7 +47,7 @@ Install Python
 - Clone the repository
 
 ```
-git clone ***
+git clone https://github.com/WhiteRabbitLab/open_classic.git
 ```
 
 - Initialise the dual databases
@@ -62,7 +62,7 @@ docker-compose up -d
 python -m fecth_data.py
 ```
 
-- Manual ETL for vectorising the data
+- Manual ETL for vectorising the data and populating the vector database
 
 ```
 python -m vectorise_data.py

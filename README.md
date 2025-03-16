@@ -57,13 +57,13 @@ docker-compose up -d
 - Populate the local OpenOpus database
 
 ```
-python fetch_data.py
+python ./src/pre-processing/fetch_data.py
 ```
 
 - Manual ETL for vectorising the data and populating the vector database
 
 ```
-python vectorise_data.py
+python ./src/vector-processing/vectorise_data.py
 ```
 
 ### Useful commands

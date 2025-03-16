@@ -3,6 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/.sql/openopus.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/.sql/openopus_vector.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/vectorise_data.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/vector-processing/vectorise_data.py" dialect="GenericSQL" />
   </component>
 </project>

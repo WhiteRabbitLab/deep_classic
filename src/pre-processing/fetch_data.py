@@ -39,6 +39,7 @@ def insert_composers(composers, conn):
         ON CONFLICT (source_id) DO UPDATE SET
             name = EXCLUDED.name,
             complete_name = EXCLUDED.complete_name,
+            portrait = EXCLUDED.portrait,
             birth = EXCLUDED.birth,
             death = EXCLUDED.death,
             epoch = EXCLUDED.epoch,

@@ -1,6 +1,3 @@
-from email.contentmanager import maintype
-from zipapp import MAIN_TEMPLATE
-
 import openai
 import psycopg2
 import numpy as np
@@ -64,7 +61,7 @@ def fetch_missing_works(main_conn, vector_conn):
 def insert_composer_embeddings(data, vector_conn):
     with vector_conn.cursor() as cur:
         sql = """
-            INSERT INTO vectorgranulardb.composer 
+            INSERT INTO composer 
             (source_id, name, portrait, birth, death, epoch, country, recommended, popular)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
@@ -73,10 +70,9 @@ def insert_composer_embeddings(data, vector_conn):
             cur.execute(sql, (
                 source_id,
                 np.array(get_embedding(name)).tolist(),
-                np.array(get_embedding(portrait)).tolist(),
-                np.array(get_embedding(birth)).tolist(),
-                np.array(get_embedding(death)).tolist(),
-                np.array(get_embedding(epoch)).tolist(),
+                np.array(portrait),
+                np.array(get_embedding(str(birth))).tolist(),
+                np.array(get_embedding(str(death))).tolist(),
                 np.array(get_embedding(epoch)).tolist(),
                 np.array(get_embedding(country)).tolist(),
                 recommended,
@@ -88,7 +84,7 @@ def insert_composer_embeddings(data, vector_conn):
 def insert_work_embeddings(data, vector_conn):
     with vector_conn.cursor() as cur:
         sql = """
-            INSERT INTO vectorgranulardb.work 
+            INSERT INTO work 
             (composer_id, title, subtitle, searchterms, genre, year, recommended, popular)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
@@ -100,7 +96,7 @@ def insert_work_embeddings(data, vector_conn):
                 np.array(get_embedding(subtitle)).tolist(),
                 np.array(get_embedding(searchterms)).tolist(),
                 np.array(get_embedding(genre)).tolist(),
-                np.array(get_embedding(year)).tolist(),
+                np.array(get_embedding(str(year))).tolist(),
                 recommended,
                 popular
             ))

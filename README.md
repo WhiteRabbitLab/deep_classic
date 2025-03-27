@@ -73,3 +73,8 @@ python ./src/vector-processing/vectorise_data.py
 ```
 docker volume rm deep_classic_postgres_vector_data
 ```
+
+
+Write script to create database with all fields vectorised 
+
+vector db for query

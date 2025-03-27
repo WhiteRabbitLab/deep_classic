@@ -28,6 +28,20 @@ services:
       - postgres_vector_data:/var/lib/postgresql/data
       - ./.sql/openopus_vector.sql:/docker-entrypoint-initdb.d/schema.sql
 
+  postgres-vector-granular:
+    image: ankane/pgvector:latest
+    container_name: postgres-vector-granular
+    restart: always
+    environment:
+      POSTGRES_USER: vectoruser
+      POSTGRES_PASSWORD: vectorpassword
+      POSTGRES_DB: vectorgranulardb
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_vector_data:/var/lib/postgresql/data
+      - ./.sql/openopus_vector.sql:/docker-entrypoint-initdb.d/schema.sql
+
 
 volumes:
   postgres_main_data:

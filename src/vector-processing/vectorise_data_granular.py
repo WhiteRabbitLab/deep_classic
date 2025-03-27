@@ -17,7 +17,7 @@ MAIN_DB_PARAMS = {
 }
 
 VECTOR_DB_PARAMS = {
-    "dbname": "vectordb",
+    "dbname": "vectorgranulardb",
     "user": "vectoruser",
     "password": "vectorpassword",
     "host": "localhost",

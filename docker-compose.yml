@@ -39,10 +39,12 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - postgres_vector_data:/var/lib/postgresql/data
-      - ./.sql/openopus_vector.sql:/docker-entrypoint-initdb.d/schema.sql
+      - postgres_vector_granular_data:/var/lib/postgresql/data
+      - ./.sql/openopus_vector_granular.sql:/docker-entrypoint-initdb.d/schema.sql
 
 
 volumes:
   postgres_main_data:
   postgres_vector_data:
+  postgres_vector_granular_data:
+

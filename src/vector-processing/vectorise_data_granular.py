@@ -1,3 +1,4 @@
+from email.contentmanager import maintype
 from zipapp import MAIN_TEMPLATE
 
 import openai
@@ -5,7 +6,7 @@ import psycopg2
 import numpy as np
 
 # OpenAI API Key
-openai.api_key = "your_openai_api_key"
+openai.api_key = "xxx"
 
 # Database connection parameters
 MAIN_DB_PARAMS = {
@@ -28,7 +29,7 @@ VECTOR_DB_PARAMS = {
 def get_embedding(text):
     if not text or text.strip() == "":
         return [0.0] * 1536  # Return zero-vector for empty fields
-    response = openai.Embedding.create(
+    response = openai.embeddings.create(
         input=text,
         model="text-embedding-ada-002"
     )
@@ -65,10 +66,10 @@ def insert_composer_embeddings(data, vector_conn):
         sql = """
             INSERT INTO vectorgranulardb.composer 
             (source_id, name, portrait, birth, death, epoch, country, recommended, popular)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         for row in data:
-            source_id, name, portrait, birth, death, epoch, country, recommended, popular = row
+            id, source_id, name, portrait, birth, death, epoch, country, recommended, popular = row
             cur.execute(sql, (
                 source_id,
                 np.array(get_embedding(name)).tolist(),
@@ -89,28 +90,29 @@ def insert_work_embeddings(data, vector_conn):
         sql = """
             INSERT INTO vectorgranulardb.work 
             (composer_id, title, subtitle, searchterms, genre, year, recommended, popular)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         for row in data:
-            composer_id, title, subtitle, searchterms, genre, year, recommended, popular = row
+            id, composer_id, title, subtitle, searchterms, genre, year, recommended, popular = row
             cur.execute(sql, (
                 composer_id,
                 np.array(get_embedding(title)).tolist(),
                 np.array(get_embedding(subtitle)).tolist(),
+                np.array(get_embedding(searchterms)).tolist(),
                 np.array(get_embedding(genre)).tolist(),
                 np.array(get_embedding(year)).tolist(),
-                np.array(get_embedding(recommended)).tolist(),
-                np.array(get_embedding(popular)).tolist()
+                recommended,
+                popular
             ))
         vector_conn.commit()
 
 def main():
-    flat_conn = psycopg2.connect(**MAIN_DB_PARAMS)
+    main_conn = psycopg2.connect(**MAIN_DB_PARAMS)
     vector_conn = psycopg2.connect(**VECTOR_DB_PARAMS)
 
     try:
         # Process Composer Data
-        missing_composers = fetch_missing_composers(flat_conn, vector_conn)
+        missing_composers = fetch_missing_composers(main_conn, vector_conn)
         if missing_composers:
             insert_composer_embeddings(missing_composers, vector_conn)
             print(f"Inserted {len(missing_composers)} new composer embeddings.")
@@ -118,7 +120,7 @@ def main():
             print("No new composers to process.")
 
         # Process Work Data
-        missing_works = fetch_missing_works(flat_conn, vector_conn)
+        missing_works = fetch_missing_works(main_conn, vector_conn)
         if missing_works:
             insert_work_embeddings(missing_works, vector_conn)
             print(f"Inserted {len(missing_works)} new work embeddings.")
@@ -126,7 +128,7 @@ def main():
             print("No new works to process.")
 
     finally:
-        flat_conn.close()
+        main_conn.close()
         vector_conn.close()
 
 if __name__ == "__main__":

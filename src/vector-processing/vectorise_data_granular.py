@@ -40,7 +40,7 @@ def fetch_missing_composers(main_conn, vector_conn):
                          "recommended, popular FROM composer")
         all_composers = main_cur.fetchall()
 
-        vector_cur.execute("SELECT composer_id FROM composer")
+        vector_cur.execute("SELECT id FROM composer")
         existing_composers = {row[0] for row in vector_cur.fetchall()}
 
         return [c for c in all_composers if c[0] not in existing_composers]
@@ -63,7 +63,7 @@ def insert_composer_embeddings(data, vector_conn):
         sql = """
             INSERT INTO composer 
             (source_id, name, complete_name, portrait, birth, death, epoch, recommended, popular)
-            VALUES (%i, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         for row in data:
             id, source_id, name, completename, portrait, birth, death, epoch, recommended, popular = row
@@ -71,13 +71,15 @@ def insert_composer_embeddings(data, vector_conn):
                 source_id,
                 np.array(get_embedding(name)).tolist(),
                 np.array(get_embedding(completename)).tolist(),
-                np.array(portrait),
+                portrait,
                 birth,
                 death,
                 np.array(get_embedding(epoch)).tolist(),
                 recommended,
                 popular
             ))
+            print(f"Inserted composer with open opus source id: {source_id}"
+                  f" and name: {completename} with new embeddings.")
         vector_conn.commit()
 
 # Insert work embeddings into vector database

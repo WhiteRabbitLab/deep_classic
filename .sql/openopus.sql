@@ -47,7 +47,6 @@ CREATE INDEX idx_composer_complete_name ON composer(complete_name);
 CREATE INDEX idx_composer_birth ON composer(birth);
 CREATE INDEX idx_composer_death ON composer(death);
 CREATE INDEX idx_composer_epoch ON composer(epoch);
-CREATE INDEX idx_composer_country ON composer(country);
 CREATE INDEX idx_composer_recommended ON composer(recommended);
 CREATE INDEX idx_composer_popular ON composer(popular);
 

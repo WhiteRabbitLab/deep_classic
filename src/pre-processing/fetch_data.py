@@ -34,7 +34,7 @@ def fetch_data(url):
 def insert_composers(composers, conn):
     with conn.cursor() as cur:
         sql = """
-        INSERT INTO composer (source_id, name, complete_name, birth, death, epoch, country, recommended, popular)
+        INSERT INTO composer (source_id, name, complete_name, birth, death, epoch, recommended, popular)
         VALUES %s
         ON CONFLICT (source_id) DO UPDATE SET
             name = EXCLUDED.name,
@@ -43,7 +43,6 @@ def insert_composers(composers, conn):
             birth = EXCLUDED.birth,
             death = EXCLUDED.death,
             epoch = EXCLUDED.epoch,
-            country = EXCLUDED.country,
             recommended = EXCLUDED.recommended,
             popular = EXCLUDED.popular
         RETURNING id, source_id;
@@ -52,7 +51,7 @@ def insert_composers(composers, conn):
             (
                 c["id"],  # OpenOpus ID as source_id
                 c["name"], c["complete_name"], c["birth"], c["death"],
-                c["epoch"], c["birth"], True, False
+                c["epoch"], True, False
             )
             for c in composers
         ]

@@ -7,7 +7,6 @@ CREATE TABLE composer (
     birth DATE NOT NULL,
     death DATE DEFAULT NULL,
     epoch VARCHAR(191) NOT NULL,
-    country VARCHAR(191),
     recommended BOOLEAN DEFAULT FALSE,
     popular BOOLEAN NOT NULL DEFAULT FALSE
 );

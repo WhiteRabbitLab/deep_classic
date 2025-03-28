@@ -33,7 +33,7 @@ def get_embedding(text):
 # Fetch composers that do not have embeddings yet
 def fetch_missing_composers(flat_conn, vector_conn):
     with flat_conn.cursor() as flat_cur, vector_conn.cursor() as vector_cur:
-        flat_cur.execute("SELECT id, name, complete_name, epoch, country FROM composer")
+        flat_cur.execute("SELECT id, name, complete_name, epoch FROM composer")
         all_composers = flat_cur.fetchall()
 
         vector_cur.execute("SELECT composer_id FROM composer_embeddings")

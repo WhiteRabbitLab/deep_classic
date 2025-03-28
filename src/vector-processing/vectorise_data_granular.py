@@ -35,8 +35,8 @@ def get_embedding(text):
 # Fetch composers missing embeddings
 def fetch_missing_composers(main_conn, vector_conn):
     with main_conn.cursor() as main_cur, vector_conn.cursor() as vector_cur:
-        main_cur.execute("SELECT id, source_id, name, portrait, "
-                         "birth, death, epoch, country, "
+        main_cur.execute("SELECT id, source_id, name, complete_name, "
+                         "portrait, birth, death, epoch, "
                          "recommended, popular FROM composer")
         all_composers = main_cur.fetchall()
 
@@ -62,19 +62,19 @@ def insert_composer_embeddings(data, vector_conn):
     with vector_conn.cursor() as cur:
         sql = """
             INSERT INTO composer 
-            (source_id, name, portrait, birth, death, epoch, country, recommended, popular)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (source_id, name, complete_name, portrait, birth, death, epoch, recommended, popular)
+            VALUES (%i, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         for row in data:
-            id, source_id, name, portrait, birth, death, epoch, country, recommended, popular = row
+            id, source_id, name, completename, portrait, birth, death, epoch, recommended, popular = row
             cur.execute(sql, (
                 source_id,
                 np.array(get_embedding(name)).tolist(),
+                np.array(get_embedding(completename)).tolist(),
                 np.array(portrait),
-                np.array(get_embedding(str(birth))).tolist(),
-                np.array(get_embedding(str(death))).tolist(),
+                birth,
+                death,
                 np.array(get_embedding(epoch)).tolist(),
-                np.array(get_embedding(country)).tolist(),
                 recommended,
                 popular
             ))
@@ -86,17 +86,17 @@ def insert_work_embeddings(data, vector_conn):
         sql = """
             INSERT INTO work 
             (composer_id, title, subtitle, searchterms, genre, year, recommended, popular)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%i, %s, %s, %s, %s, %s, %s, %s)
         """
         for row in data:
-            id, composer_id, title, subtitle, searchterms, genre, year, recommended, popular = row
+            composer_id, title, subtitle, searchterms, genre, year, recommended, popular = row
             cur.execute(sql, (
                 composer_id,
                 np.array(get_embedding(title)).tolist(),
                 np.array(get_embedding(subtitle)).tolist(),
                 np.array(get_embedding(searchterms)).tolist(),
                 np.array(get_embedding(genre)).tolist(),
-                np.array(get_embedding(str(year))).tolist(),
+                year,
                 recommended,
                 popular
             ))
